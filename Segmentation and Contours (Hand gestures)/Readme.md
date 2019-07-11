@@ -1,5 +1,5 @@
 1. **Hand_gestures.py** is implementation on various **OpenCV** functions like the **Adaptive Thersholding**, **Contours** etc.
-2. The files does *not* identify any hand gesturs for now, at this stage it only finds the contours of the hands.
+2. The files does *not* identify any hand gestures for now, at this stage it only finds the contours of the hands.
 3. Identification of Hand gestures will be incorporated into the file in some time. 
 4. Given below is the screenshot of the program on real time video capture.
 
