@@ -1,7 +1,7 @@
 import cv2
 import math
 import numpy as np
-
+from scipy.spatial import ConvexHull, convex_hull_plot_2d
 cap = cv2.VideoCapture(0)
 
 while (1):
@@ -17,9 +17,7 @@ while (1):
 
     res = cv2.bitwise_and(frame, frame, mask=mask)
 
-    cv2.imshow("frame", frame)
     cv2.imshow("mask", mask)
-    cv2.imshow("res", res)
 
     roi = mask[0:300, 50:250]
     cv2.imshow("roi", roi)
@@ -33,12 +31,19 @@ while (1):
             max_area = area
             ci = i
     cnt = contours[ci]
+
     hull = cv2.convexHull(cnt,returnPoints=False)
+
+
+
+
     drawing = np.zeros(frame.shape, np.uint8)
     cv2.drawContours(drawing, [cnt], 0, (0, 255, 0), 2)
 
     defects = cv2.convexityDefects(cnt, hull)
+    areacnt = max_area
     count = 0
+
     if type(defects) != type(None):
         for i in range(defects.shape[0]):
             s, e, f, d = defects[i, 0]
@@ -53,18 +58,35 @@ while (1):
             c = math.sqrt((end[0] - far[0]) ** 2 + (end[1] - far[1]) ** 2)
 
             angle = math.acos((b ** 2 + c ** 2 - a ** 2) / (2 * b * c))  # cosine theorem
+
             if (angle <= math.pi / 2):
                 count += 1
+                l = count
                 cv2.circle(drawing, far, 8, [211, 84, 0], -1)
             print(count)
 
 
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        count_defects = count
+        if count_defects == 1:
+            cv2.putText(frame, " 2", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+        elif count_defects == 2:
+            cv2.putText(frame, " 3", (5, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+        elif count_defects == 3:
+            cv2.putText(frame, " 4", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+        elif count_defects == 4:
+            cv2.putText(frame, " 5", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+        else:
+            cv2.putText(frame, "   1/0   ", (50, 50),
+                        cv2.FONT_HERSHEY_SIMPLEX, 2, 2)
+        cv2.imshow("res", res)
 
-    cv2.imshow("drawing", drawing)
+        cv2.imshow("drawing", drawing)
+        cv2.imshow("frame", frame)
 
-    k = cv2.waitKey(5) & 0xFF
-    if k == 27:
-        break
+        k = cv2.waitKey(1) & 0xFF
+        if k == 27:
+            break
 
 cv2.destroyAllWindows()
 
